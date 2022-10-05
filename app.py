@@ -1,42 +1,19 @@
 from flask import Flask, render_template, request, redirect
 import json
+from datetime import date
 
 app = Flask(__name__)
 
 towns = ['Allendale / Glen Rock/Midland Park/ Waldwick','Becton Regional  - Becton/Carlstadt/East Rutherford/Woodridge','Bogota / Moonachie/South Hackensack','Bergenfield/New Milford','Cliffside Park/Fairview/Palisades Park','Dumont/Cresskill','Edgewater / Leonia','Elmwood Park/ Hasbrouck Heights','Englewood / Tenafly','Englewood Cliffs','Fair Lawn','Fort Lee', 'Garfield','Franklin Lakes/Oakland','Hackensack / Oradell / River Edge','Hohokus','Lodi','Lyndhurst / North Arlington','Mahwah (1) Mahwah / Franklin Lakes/Wykoff','Mahwah (2) Mahwah/Ramsey','Maywood','Northern Valley/ Old Tappan/ Demarest/ Closter/ Harrington Park/ Haworth/ Norwood/Northvale)',  'Paramus','Pascack Valley / Park Ridge / Hillsdale / Montvale / Rivervale / Woodcliff Lake / Westwood','Ridgefield','Ridgefield Park / Little Ferry','Ridgewood/ Rochelle Park/Saddle Brook','Rutherford / Wallington','Teaneck', 'Upper Saddle River']
-companies = ['Leckie (TT004)',
-'Becton',
-'Leckie (TT227)',
-'Bergenfield',
-'Cliffside',
-'Dumont',
-'Leonia',
-'Joshua Tours (TT221)',
-'Englewood',
-'Leckie (TT204)',
-'Joshua Tours (TT222)',
-'Joshua Tours (TT205)',
-'Garfield',
-'D&M (TT001)',
-'Joshua Tours (TT224)',
-'N&Y Transportation',
-'Leckie (TT220)',
-'Leckie (TT202)',
-'Leckie (TT002)',
-'Leckie (TT006)',
-'Leckie (TT231)',
-'Valley (VA326)',
-'First Student (TT001)',
-'Leckie (TT003). ',          
-'First Student (TET11)',
-'Ridgefield Park',
-'Joshua Tours (TT228)',
-'Joshua Tours (TT226)',
-'Teaneck',
-'Leckie (TT005)']
+companies = ['Leckie (TT004)','Becton','Leckie (TT227)','Bergenfield','Cliffside','Dumont','Leonia','Joshua Tours (TT221)','Englewood','Leckie (TT204)','Joshua Tours (TT222)','Joshua Tours (TT205)','Garfield','D&M (TT001)','Joshua Tours (TT224)','N&Y Transportation','Leckie (TT220)','Leckie (TT202)','Leckie (TT002)','Leckie (TT006)','Leckie (TT231)','Valley (VA326)','First Student (TT001)','Leckie (TT003). ',          'First Student (TET11)','Ridgefield Park','Joshua Tours (TT228)','Joshua Tours (TT226)','Teaneck','Leckie (TT005)']
 
 @app.route('/')
 def home():
+    with open('static/change.txt', 'r') as file:
+        past_date = file.read()
+        if past_date != str(date.today()):
+            with open('static/buses.json', 'w') as file:
+                file.write('{}')
     return render_template('index.html')
 
 @app.route('/bus-view')
@@ -87,6 +64,8 @@ def add_bus(result):
         json_object = json.dumps(current_buses, indent=4)
         with open("static/buses.json", "w") as outfile:
             outfile.write(json_object)
+        with open('static/change.txt', 'w') as file:
+            file.write(str(date.today()))
         return redirect('/add/good')
 
 if __name__ == '__main__':

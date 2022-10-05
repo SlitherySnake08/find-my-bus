@@ -1,3 +1,10 @@
 {
-    
+    "Allendale / Glen Rock/Midland Park/ Waldwick": {
+        "town": "Allendale / Glen Rock/Midland Park/ Waldwick",
+        "company": "Leckie (TT004)",
+        "spot": "1",
+        "arrived": "yes",
+        "lastcall": "no",
+        "departed": "no"
+    }
 }
