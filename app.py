@@ -30,7 +30,7 @@ def authenticate(result):
     if request.method == 'POST':
         password = request.form['admin_pass']
         if password == '1234':
-            return redirect('/add')
+            return redirect('/add?login=true')
         else: 
             return redirect('/authenticate/incorrect')
     
@@ -38,27 +38,30 @@ def authenticate(result):
 @app.route('/add/<string:result>', methods=['GET', 'POST'])
 def add_bus(result):
     if request.method == 'GET':
-        return render_template('add.html', towns=towns, result=result)
+        if request.args.get('login') == 'true':
+            return render_template('add.html', towns=towns, result=result)
+        else:
+            return redirect('/authenticate')
     elif request.method == 'POST':
         with open('static/buses.json') as file:
             current_buses = json.load(file)
         bus_town = request.form['town']
         if bus_town == 'Town':
-            return redirect('/add/error')
+            return redirect('/add/error?login=true')
         index = towns.index(bus_town)
         bus_company = companies[index]
         spot = request.form['spot']
         if spot == '':
-            return redirect('/add/error')
+            return redirect('/add/error?login=true')
         arrived = request.form['arrived']
         if arrived == 'Arrived?':
-            return redirect('/add/error')
+            return redirect('/add/error?login=true')
         lastcall = request.form['lastcall']
         if lastcall == 'Last Call?':
-            return redirect('/add/error')
+            return redirect('/add/error?login=true')
         departed = request.form['departed']
         if departed == 'Departed?':
-            return redirect('/add/error')
+            return redirect('/add/error?login=true')
         bus_data = {"town":bus_town, "company":bus_company, "spot":spot, "arrived":arrived, "lastcall":lastcall, "departed":departed}
         current_buses[bus_town] = bus_data
         json_object = json.dumps(current_buses, indent=4)
@@ -66,7 +69,7 @@ def add_bus(result):
             outfile.write(json_object)
         with open('static/change.txt', 'w') as file:
             file.write(str(date.today()))
-        return redirect('/add/good')
+        return redirect('/add/good?login=true')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
