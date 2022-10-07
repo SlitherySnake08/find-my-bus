@@ -7,6 +7,10 @@
     <meta charset="'utf-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <link rel="apple-touch-icon" sizes="180x180" href="../static/favicon_io/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon_io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon_io/favicon-16x16.png">
+        <link rel="manifest" href="../static/favicon_io/site.webmanifest">
 </head>
 
 <body>
@@ -19,18 +23,18 @@
         </div>
         <div class="container ps-0 mt-3">
             <div class="row row-cols-1 row-cols-md-4 g-4">
-                {% for key, value in list.items() %}
+                {% for bus in list %}
                 <div class="col">
                     <div class="card h-100 shadow">
                         <div class="card-body pb-1">
-                            <h5 class="card-title">{{value.town}}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{value.company}}</h6>
+                            <h5 class="card-title">{{bus[0]}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{bus[1]}}</h6>
                         </div>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Spot: {{value.spot}}</li>
-                            <li class="list-group-item">Arrived: {{value.arrived}}</li>
-                            <li class="list-group-item">Last Call: {{value.lastcall}}</li>
-                            <li class="list-group-item">Departed: {{value.departed}}</li>
+                            <li class="list-group-item">Spot: {{bus[2]}}</li>
+                            <li class="list-group-item">Arrived: {{bus[3]}}</li>
+                            <li class="list-group-item">Last Call: {{bus[4]}}</li>
+                            <li class="list-group-item">Departed: {{bus[5]}}</li>
                         </ul>
                     </div>
                 </div>
