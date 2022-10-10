@@ -3,20 +3,22 @@ from datetime import date
 import sqlite3
 from flask import Flask, render_template, request, redirect
 
-# open the database connection and define cursor. Create table and close connection
-conn = sqlite3.connect('static/buses_database.db')
-c = conn.cursor()
-c.execute("""CREATE TABLE IF NOT EXISTS buses(
-          town text,
-          company text,
-          spot text,
-          arrived text,
-          lastcall text,
-          departed text,
-          date text
-)""")
-
-
+def create_database():
+    '''open the database connection and define cursor. Create table and close connection'''
+    conn = sqlite3.connect('static/buses_database.db')
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS buses(
+            town text,
+            company text,
+            spot text,
+            arrived text,
+            lastcall text,
+            departed text,
+            date text
+    )""")
+    # close database
+    conn.commit()
+    conn.close()
 
 def check_date():
     '''
@@ -24,22 +26,19 @@ def check_date():
     If it doens't match, delete contents of buses, because a new day has passed.
     '''
     conn = sqlite3.connect('static/buses_database.db')
-    c = conn.cursor()
-    c.execute("SELECT *, oid FROM buses")
-    records = c.fetchall()
+    cur = conn.cursor()
+    cur.execute("SELECT *, oid FROM buses")
+    records = cur.fetchall()
     print(records)
     print(len(records))
     if len(records) != 0:
         if records[0][-2] != str(date.today()):
             print(records[0][-2])
             print(date.today())
-            c.execute("DELETE FROM buses")
+            cur.execute("DELETE FROM buses")
             conn.commit()
             conn.close()
     # print(records)
-    
-    
-
 
 def add_to_db(town, spot, arrived, lastcall, departed):
     '''
@@ -47,10 +46,10 @@ def add_to_db(town, spot, arrived, lastcall, departed):
     Insert the bus into the database, and close connection
     '''
     conn = sqlite3.connect('static/buses_database.db')
-    c = conn.cursor()
+    cur = conn.cursor()
     index = towns.index(town)
     company = companies[index]
-    c.execute(
+    cur.execute(
         "INSERT INTO buses VALUES (:town, :company, :spot, :arrived, :lastcall, :departed, :date)",
               {
                   'town': town,
@@ -70,9 +69,9 @@ def show_buses():
     display all buses in table
     '''
     conn = sqlite3.connect('static/buses_database.db')
-    c = conn.cursor()
-    c.execute("SELECT *, oid FROM buses")
-    records = c.fetchall()
+    cur = conn.cursor()
+    cur.execute("SELECT *, oid FROM buses")
+    records = cur.fetchall()
     conn.commit()
     conn.close()
     return records
@@ -83,12 +82,12 @@ def edit_bus(oid, spot, arrived, lastcall, departed):
     edit a bus by using the id of the bus and replacing new info
     '''
     conn = sqlite3.connect('static/buses_database.db')
-    c = conn.cursor()
-    c.execute(f"UPDATE BUSES SET 'spot' = '{spot}' where oid = '{oid}'")
-    c.execute(f"UPDATE BUSES SET 'arrived' = '{arrived}' where oid = '{oid}'")
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(f"UPDATE BUSES SET 'spot' = '{spot}' where oid = '{oid}'")
+    cur.execute(f"UPDATE BUSES SET 'arrived' = '{arrived}' where oid = '{oid}'")
+    cur.execute(
         f"UPDATE BUSES SET 'lastcall' = '{lastcall}' where oid = '{oid}'")
-    c.execute(
+    cur.execute(
         f"UPDATE BUSES SET 'departed' = '{departed}' where oid = '{oid}'")
     conn.commit()
     conn.close()
@@ -130,6 +129,7 @@ def home():
     #     if past_date != str(date.today()):
     #         with open('static/buses.json', 'w') as file:
     #             file.write('{}')
+    create_database()
     check_date()
     return render_template('index.html')
 
@@ -209,10 +209,6 @@ def add_bus(result):
     # print(show_buses())
     # print(after_edit)
     return redirect('/add/good?login=true')
-
-# close database
-conn.commit()
-conn.close()
 
 # run app
 if __name__ == '__main__':
